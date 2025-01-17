@@ -93,7 +93,8 @@ def book(consultants, hour, duration, criteria):
     # 3. 從可用的顧問中選出最適合的
     if not available_consultants:
         print("No service")
-    
+        return
+
     chosen = min(available_consultants, key=lambda x: x[criteria]) if criteria == "price" else max(available_consultants, key=lambda x: x["rate"])
     
     # 4. 更新選中顧問的預約時間
