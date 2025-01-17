@@ -1,5 +1,7 @@
+
 const burger = document.querySelector('.menu');
 const fixed = document.querySelector('.fixed');
+
 burger.addEventListener('click', () =>{
     fixed.classList.add("show");
 });

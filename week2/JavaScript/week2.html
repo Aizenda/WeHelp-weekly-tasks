@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        console.log("---------------task1------------------")
+        function findAndPrint(messages, currentStation) {
+            // 建立車站順序list，方便後續使用
+            const greenLine = {
+                "Songshan": 0,
+                "Nanjing Sanmin": 1,
+                "Taipei Arena": 2,
+                "Nanjing Fuxing": 3,
+                "Songjiang Nanjing": 4,
+                "Zhongshan": 5,
+                "Beimen": 6,
+                "Ximen": 7,
+                "Xiaonanmen": 8,
+                "Chiang Kai-Shek Memorial Hall": 9,
+                "Guting": 10,
+                "Taipower Building": 11,
+                "Gongguan": 12,
+                "Wanlong": 13,
+                "Jingmei": 14,
+                "Dapinglin": 15,
+                "Qizhang": 16,
+                "Xindian City Hall": 17,
+                "Xindian": 18
+            };
+
+            const XiaobitanLine = { "Qizhang": 0, "Xiaobitan": 1 };
+
+            // 找到每個人的站點
+            const stations = {};
+            for (const [key, values] of Object.entries(messages)) {
+                for (const station of Object.keys({ ...greenLine, ...XiaobitanLine })) {
+                    if (values.includes(station)) {
+                        stations[key] = station;
+                        break;
+                    }
+                }
+            }
+
+            const distance = {};
+            // 計算距離
+            for (const [name, station] of Object.entries(stations)) {
+                if (currentStation in greenLine && station in greenLine) {
+                    // 狀況1: 都在綠線上
+                    distance[name] = Math.abs(greenLine[currentStation] - greenLine[station]);
+                } else if (currentStation in XiaobitanLine && station in greenLine) {
+                    // 狀況2: 一個在小碧潭線上，另一個在綠線上
+                    distance[name] = XiaobitanLine[currentStation] + Math.abs(greenLine["Qizhang"] - greenLine[station]);
+                } else if (currentStation in greenLine && station in XiaobitanLine){
+                    distance[name] = Math.abs(greenLine[currentStation] - greenLine['Qizhang']) + XiaobitanLine[station];
+                }
+                else if (currentStation in XiaobitanLine && station in XiaobitanLine) {
+                    // 狀況3: 都在小碧潭線上
+                    distance[name] = Math.abs(XiaobitanLine[currentStation] - XiaobitanLine[station]);
+                }
+            }
+
+            // 找到最短距離
+            const minDistance = Math.min(...Object.values(distance));
+            const names = Object.keys(distance).filter((key) => distance[key] === minDistance);
+
+            // 印出結果
+            console.log(names.join(", "));
+        }
+            const messages={
+            "Bob":"I'm at Ximen MRT station.",
+            "Mary":"I have a drink near Jingmei MRT station.",
+            "Copper":"I just saw a concert at Taipei Arena.",
+            "Leslie":"I'm at home near Xiaobitan station.",
+            "Vivian":"I'm at Xindian station waiting for you."
+            };
+            findAndPrint(messages, "Wanlong"); // print Mary
+            findAndPrint(messages, "Songshan"); // print Copper
+            findAndPrint(messages, "Qizhang"); // print Leslie
+            findAndPrint(messages, "Ximen"); // print Bob
+            findAndPrint(messages, "Xindian City Hall"); // print Vivian
+
+        console.log("---------------task2------------------")
+        function book(consultants, startHour, duration, criteria) {
+            // 步驟 1: 建立要預約的時段陣列
+            let bookingHours = [];
+            for (let hour = startHour; hour < startHour + duration; hour++) {
+                bookingHours.push(hour);
+            }
+
+            // 步驟 2: 找出可以預約的顧問
+            let availableConsultants = [];
+            for (let consultant of consultants) {
+                // 如果顧問沒有預約時間，代表全部時段都可以預約
+                if (!consultant.office_hour) {
+                    availableConsultants.push(consultant);
+                    continue;
+                }
+
+                // 檢查是否有時段衝突
+                let hasConflict = false;
+                for (let hour of bookingHours) {
+                    if (consultant.office_hour.includes(hour)) {
+                        hasConflict = true;
+                        break;
+                    }
+                }
+
+                // 如果沒有衝突，加入可用顧問名單
+                if (!hasConflict) {
+                    availableConsultants.push(consultant);
+                }
+            }
+
+            // 步驟 3: 如果沒有可用顧問，顯示訊息並結束
+            if (availableConsultants.length === 0) {
+                console.log("No service");
+                return;
+            }
+
+            // 步驟 4: 根據條件選出最適合的顧問
+            let chosenConsultant;
+            if (criteria === "price") {
+                // 找價格最低的顧問
+                chosenConsultant = availableConsultants[0];
+                for (let consultant of availableConsultants) {
+                    if (consultant.price < chosenConsultant.price) {
+                        chosenConsultant = consultant;
+                    }
+                }
+            } else {
+                // 找評分最高的顧問
+                chosenConsultant = availableConsultants[0];
+                for (let consultant of availableConsultants) {
+                    if (consultant.rate > chosenConsultant.rate) {
+                        chosenConsultant = consultant;
+                    }
+                }
+            }
+
+            // 步驟 5: 更新選中顧問的預約時間
+            for (let consultant of consultants) {
+                if (consultant.name === chosenConsultant.name) {
+                    // 如果顧問還沒有預約時間，創建新陣列
+                    if (!consultant.office_hour) {
+                        consultant.office_hour = bookingHours;
+                    } else {
+                        // 把新的預約時間加入既有的時間
+                        for (let hour of bookingHours) {
+                            consultant.office_hour.push(hour);
+                        }
+                    }
+                    break;
+                }
+            }
+
+                // 步驟 6: 顯示選中的顧問名字
+                console.log(chosenConsultant.name);
+            }
+            const consultants=[
+            {"name":"John", "rate":4.5, "price":1000},
+            {"name":"Bob", "rate":3, "price":1200},
+            {"name":"Jenny", "rate":3.8, "price":800}
+            ];
+            book(consultants, 15, 1, "price"); // Jenny
+            book(consultants, 11, 2, "price"); // Jenny
+            book(consultants, 10, 2, "price"); // John
+            book(consultants, 20, 2, "rate"); // John
+            book(consultants, 11, 1, "rate"); // Bob
+            book(consultants, 11, 2, "rate"); // No Service
+            book(consultants, 14, 3, "price"); // John
+
+
+        console.log("---------------task3------------------")
+        function func(...data){
+            name_list = []
+            for (let i of  data){
+                if (i.length === 2 || i.length === 3){
+                    let middle_name = i.slice(1 , 2);
+                    name_list.push(middle_name);
+                }else if(i.length === 4 || i.length === 5){
+                    let middle_name = i.slice(2 , 3);
+                    name_list.push(middle_name);
+                };};
+
+                let unique_indices = [];
+            for (let i = 0; i < name_list.length; i++) {
+                if (name_list.filter(x => x === name_list[i]).length === 1) {
+                    unique_indices.push(i);
+                };
+            };
+
+            if (unique_indices.length === 1){
+                console.log(data[unique_indices[0]]);
+            }else{
+                console.log("沒有")
+            }
+        };
+            func("彭大牆", "陳王明雅", "吳明"); // print 彭大牆
+            func("郭靜雅", "王立強", "郭林靜宜", "郭立恆", "林花花"); // print 林花花
+            func("郭宣雅", "林靜宜", "郭宣恆", "林靜花"); // print 沒有
+            func("郭宣雅", "夏曼藍波安", "郭宣恆"); // print 夏曼藍波安
+
+        console.log("---------------task4------------------")
+        function getNumber(index){
+            let number = 0
+            const number_list = []
+
+            for(let i = 0 ; i <= index  ; i++ ) {
+                number_list.push(number);
+                number +=4 ;
+
+                if ((i+1) % 3 === 0){
+                    number -= 5};
+                };
+            console.log(number_list[index]);
+        };
+            getNumber(1); // print 4
+            getNumber(5); // print 15
+            getNumber(10); // print 25
+            getNumber(30); // print 70
+    </script>
+</body>
+</html>
