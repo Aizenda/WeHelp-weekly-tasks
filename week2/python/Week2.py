@@ -150,23 +150,23 @@ func("郭宣雅", "夏曼藍波安", "郭宣恆" ) # print 夏曼藍波安
 print("-"*100+"task4"+"-"*100)
 def get_number(index):
     # 初始值
-    number = 0
-    number_list = []
-    
+    number = 0 
+    number_list = [] 
     # 從索引 0 開始迴圈直到指定的 index
-    for i in range(index +1 ):
+    for i in range( index + 1 ):  
         number_list.append(number)
-        number += 4
+        number = number + 4
     # 等差數列 0, 4, 8,[12]...;但當index為3的倍數時 number為前項-1 與等差數列的12相差5,所以這邊-5
     # 變形等差 0, 4, 8,[7]...;
-        if (i + 1 ) % 3 == 0:
+        if ( i + 1 ) %  3 == 0:
             number -= 5
     print(number_list[index])
-    
 get_number(1) # print 4
-get_number(5) # print 15
+get_number(3) # print 15
 get_number(10) # print 25
 get_number(30) # print 70
 
 print("-"*205)
+
+
 
