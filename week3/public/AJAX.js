@@ -26,7 +26,7 @@ fetch(url)
         const promises = regional_data.map((item, index) => {
             return new Promise((resolve) => {
                 const title = item["stitle"];
-                const imgSrc = item["filelist"].match(pattern)[0]; // 確保圖片存在
+                const imgSrc = item["filelist"].match(pattern)[0]; 
                 if (imgSrc) {
                     if (index < 3) {
                         // 更新small-box

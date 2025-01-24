@@ -1,23 +1,25 @@
 import urllib.request as req
-import json , re , csv
+import json , re , csv , os
 #task2使用
 from bs4 import BeautifulSoup as soup
 
 #Task1 start
 def Task1(regional_URL , MRT_URL):
 
-    header={"user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"}
-    #地理資訊請求，獲取資料
+    header ={"user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"}
+    
     regional_request = req.Request(regional_URL , headers = header)
-    regional_reponse = req.urlopen(regional_request).read()
-    regional_data = json.loads(regional_reponse)["data"]["results"]
+    MRT_request = req.Request(MRT_URL , headers = header)
+
+    #地理資訊請求，獲取資料
+    with req.urlopen(regional_request) as regional_reponse:
+        regional_data = json.load(regional_reponse)["data"]["results"]
 
     #MRT資訊請求，獲取資料
-    MRT_request = req.Request(MRT_URL , headers = header)
-    MRT_reponse = req.urlopen(MRT_request).read()
-    MRT_data = json.loads(MRT_reponse)["data"]
-
-    #處理MRT資訊 => {"SERIAL_NO" : "地名"}
+    with req.urlopen(MRT_request) as  MRT_reponse:
+        MRT_data = json.load(MRT_reponse)["data"]
+        
+    #處理MRT資訊 => {"SERIAL_NO" : "地名"}，用SERIAL_NO的車號取得地區
     MRT_to_district = {}
     for i in MRT_data:
         district = i["address"].split(" ")[2][0:3]
@@ -25,14 +27,14 @@ def Task1(regional_URL , MRT_URL):
         serial_no = i["SERIAL_NO"]
         MRT_to_district[serial_no] = district
 
-    #處理MRT資訊 => {站名 : list[SERIAL_NO] }
-    MRT_request = {}
+    #處理MRT資訊 => {站名 : list[SERIAL_NO]}，用站名對不同捷運號碼分組
+    MRT_NO = {}
     for i in MRT_data:
         mrt = i["MRT"]
         serial_no = i["SERIAL_NO"]
-        if mrt not in MRT_request:
-            MRT_request[mrt] = []
-        MRT_request[mrt].append(serial_no) 
+        if mrt not in MRT_NO:
+            MRT_NO[mrt] = []
+        MRT_NO[mrt].append(serial_no) 
 
 
     pattern = r"https://.*?\.[Jj][Pp][Gg]"
@@ -50,7 +52,7 @@ def Task1(regional_URL , MRT_URL):
         img = imgs[0] if imgs else "No Image Available"
 
         for mrt_station, district in MRT_to_district.items():# 判斷資料是否包含SERIAL_NO
-            if mrt_station in i.get("SERIAL_NO", ""):# 如果找到匹配的地鐵站，添加到結果
+            if mrt_station in i["SERIAL_NO"]:
                 result = [
                     title,
                     district,
@@ -60,7 +62,7 @@ def Task1(regional_URL , MRT_URL):
                     ]
                 Spot_results.append(result)
 
-        for MRT_name , serial_numbers in MRT_request.items():
+        for MRT_name , serial_numbers in MRT_NO.items():#依據MRT的車號反查MRT_results中的list[SERIAL_NO] => 站名:[景點1,景點2,景點3...],也就是MRT.csv所需
             if MRT_name not in MRT_results:
                 MRT_results[MRT_name] = []
             if serial_no in serial_numbers:
@@ -68,35 +70,40 @@ def Task1(regional_URL , MRT_URL):
 
 
 
-    # 指定檔案位置，這裡用完整路徑
-    Spot_path = r"D:\weekly tasks\week3\Spot.csv"
-    MRT_path = r"D:\weekly tasks\week3\mrt.csv"
-
+   # 取得當前程式所在的目錄
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # 定義輸出檔案路徑（與程式同目錄）
+    Spot_path = os.path.join(current_dir, "Spot.csv")
+    MRT_path = os.path.join(current_dir, "MRT.csv")
+    
     # 打開檔案並寫入資料
     with open(Spot_path, mode='w', newline='\n', encoding='utf-8') as file:
         csv_writer = csv.writer(file)
         csv_writer.writerows(Spot_results)
-        csv_writer.writerows(" ")
 
     with open(MRT_path, mode='w', newline='\n', encoding='utf-8') as file:
-        csv_writer = csv.writer(file, quoting=csv.QUOTE_NONE,escapechar=" ")
+        csv_writer = csv.writer(file, quoting=csv.QUOTE_NONE, escapechar=" ")
         for key, values in MRT_results.items():
-                csv_writer.writerow([key, ",".join(values)])
+            csv_writer.writerow([key, ",".join(values)])
 
 Attractions_URL = "https://padax.github.io/taipei-day-trip-resources/taipei-attractions-assignment-1"
 MRT_URL = "https://padax.github.io/taipei-day-trip-resources/taipei-attractions-assignment-2"
 
 
 Task1(Attractions_URL , MRT_URL)
-#Task1 end
+# #Task1 end
 
 #Task2 start
 
 def Task2(ptt_url):
     header_2 = {"user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
             "cookie":"over18=1"}
+    
+    #對ptt發出請求，獲得回應物件
     ptt_request = req.Request(ptt_url , headers=header_2)
-    ppt_response = req.urlopen(ptt_request).read().decode("utf-8")
+    with req.urlopen(ptt_request) as ppt_response:
+        ppt_response = ppt_response.read().decode("utf-8")
 
     root = soup(ppt_response , "html.parser")
     data = root.find_all("div" , class_="r-ent")
@@ -135,15 +142,19 @@ def Task2(ptt_url):
         if len(time_data) > 3:  
             article_list[count].append(time_data[3].string)  
         else:
-            article_list[count].append(" ") 
+            article_list[count].append("None") 
 
         count += 1
 
-    article_path = r"D:\weekly tasks\week3\article.csv"
+    # 取得當前程式所在的目錄
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # 定義輸出檔案路徑（與程式同目錄）
+    article_path = os.path.join(current_dir, "article.csv")
+
     with open(article_path, mode='a', newline='', encoding='utf-8') as file:
         csv_writer = csv.writer(file)
         csv_writer.writerows(article_list)
-
 
     root = soup(ppt_response , "html.parser")
     next_link = root.find("a" , string = "‹ 上頁")
