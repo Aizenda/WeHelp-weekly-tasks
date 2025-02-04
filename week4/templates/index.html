@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="/static/index.css">
+</head>
+<body>
+	<div class = "title">歡迎光臨，請輸入帳號密碼</div>
+	<div class = "title2">登入系統</div>
+	<div>
+		<form  method="POST" id="myForm" class = "form" action = "/signin">
+			<div>
+				<span>帳號</span>
+				<input type="text" name="member"/>
+			</div>
+
+			<div>
+			<span>密碼</span>
+				<input type="password" name="password"/>
+			</div>
+
+			<div>
+				<span>同意條款</span>
+				<input type="checkbox"  id="agreeCheckbox" name="checkbox"/>
+			</div>
+
+			<button>登入</button>
+		</form>
+	</div>
+	<hr/>
+	<div class = "title2">計算正整數平方</div>
+	<div>
+		<form action="/square" class="form" id="squareForm">
+			<span>正整數</span>
+			<input type="text"  id="checknum" name="num">
+			<button>計算</button>
+		</form>
+	</div>
+	<script>
+		document.getElementById("myForm").addEventListener("submit", function(event) {
+				let checkbox = document.getElementById("agreeCheckbox");
+				if (!checkbox.checked) {
+						alert("請勾選同意條款");
+						event.preventDefault();
+				};
+			});
+
+			document.getElementById("squareForm").addEventListener("submit", function(event) {
+            let squareInput = document.getElementById("checknum");
+            let number = Number(squareInput.value);  // 把輸入轉成數字
+
+            if (isNaN(number) || number <= 0 || !Number.isInteger(number)) {
+                alert("請輸入有效的正整數！");
+                event.preventDefault();  // 阻止表單提交
+            }
+        });
+			
+	</script>
+</body>
+</html>
