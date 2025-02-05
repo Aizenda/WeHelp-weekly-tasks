@@ -30,10 +30,10 @@ async def signin(
 ): 
     # 驗證邏輯
     if not member or not password:
-        return RedirectResponse("/error?err=帳號與密碼不能為空", status_code=303)
+        return RedirectResponse("/error?message=帳號與密碼不能為空", status_code=303)
     
     if member != "test" or password != "test":
-        return RedirectResponse("/error?err=請確認帳號密碼是否正確", status_code=303)
+        return RedirectResponse("/error?message=請確認帳號密碼是否正確", status_code=303)
     
     # 儲存登入資料到session
     request.session["member"] = member
@@ -44,7 +44,7 @@ async def signin(
 @app.get("/member")
 async def member(request: Request): 
     if  len(request.session) == 0:
-        return RedirectResponse("/error?err=您尚未登錄", status_code=303)
+        return RedirectResponse("/error?message=您尚未登錄", status_code=303)
     response = templates.TemplateResponse("member_page.html", {"request": request, "msg":"恭喜您，成功登入系統" })
     response.headers["Cache-Control"] = "no-store"#禁止儲存
     return response
@@ -59,27 +59,25 @@ async def signout(request: Request):
 
 # 錯誤路由
 @app.get("/error")
-async def err(request: Request, err: str):
-    return templates.TemplateResponse("err_page.html", {"request": request, "err": err})
+async def err(request: Request, message: str):
+    return templates.TemplateResponse("err_page.html", {"request": request, "err": message})
 
-@app.get("/square")
-async def square(request: Request, num: str = Query(...)):
+#平方路由
+@app.get("/square/{num}")
+async def square(request: Request, num):
     try:
         # 嘗試將 num int
         num_int = int(num)
 
     except ValueError:
         # 如果轉換失敗，表示輸入不是有效的數字
-        return RedirectResponse("/error?err=請輸入有效的格式(ex:1,2,3...)")
+        return RedirectResponse("/error?message=請輸入有效的格式(ex:1,2,3...)")
 
     if num_int <= 0:
-        return RedirectResponse("/error?err=請輸入大於0的數字")
+        return RedirectResponse("/error?message=請輸入大於0的數字")
     
     return templates.TemplateResponse("square.html", {"request": request, "num": num_int * num_int})
 
 
 # 靜態檔案處理
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
-#Jinja2處理樣板引擎
-templates = Jinja2Templates(directory="templates")
