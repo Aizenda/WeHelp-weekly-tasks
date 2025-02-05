@@ -65,17 +65,11 @@ async def err(request: Request, message: str):
 #平方路由
 @app.get("/square/{num}")
 async def square(request: Request, num):
-    try:
-        # 嘗試將 num int
-        num_int = int(num)
 
-    except ValueError:
-        # 如果轉換失敗，表示輸入不是有效的數字
-        return RedirectResponse("/error?message=請輸入有效的格式(ex:1,2,3...)")
+    if not num.isdigit():
+        return RedirectResponse('/error?message=請輸入有效的"正"整數')
+    num_int = int(num)
 
-    if num_int <= 0:
-        return RedirectResponse("/error?message=請輸入大於0的數字")
-    
     return templates.TemplateResponse("square.html", {"request": request, "num": num_int * num_int})
 
 

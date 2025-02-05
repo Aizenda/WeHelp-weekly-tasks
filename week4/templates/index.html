@@ -48,18 +48,20 @@
 				};
 			});
 
-			function redirectToSquare() {
-        let num = document.getElementById("checknum").value;
-        let parsedNum = parseInt(num, 10);
+		function redirectToSquare() {
+			let num = document.getElementById("checknum").value;
 
-        if (isNaN(parsedNum) || parsedNum <= 0) {
-            alert("請輸入有效的正整數");
-            return false;  // 阻止表單提交
-        }
-				window.location.href = `/square/${parsedNum}`;
-        return false;  // 阻止表單的默認提交
-    }
+			// 使用正則表達式，確保 `num` 只能是 **正整數**
+			if (!/^[0-9]\d*$/.test(num)) {
+					alert("請輸入有效的正整數");
+					return false;  // 阻止表單提交
+			};
 
+			let parsedNum = parseInt(num, 10);  // 確保轉換為整數
+
+			window.location.href = `/square/${parsedNum}`;
+			return false;  // 阻止表單的默認提交
+		};
 			
 	</script>
 </body>
