@@ -1,5 +1,3 @@
-# SQL指令與截圖
-
 <h1 style="text-align: center;">Week 5 Task Summary</h1>
 
 * ## MySQL Login Prerequisite
