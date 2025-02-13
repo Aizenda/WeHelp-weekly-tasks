@@ -15,6 +15,8 @@ app.add_middleware(
     secret_key="vuhgfvuvytdfsdxhkbkjb", 
     https_only=False
 )
+
+
 # 根目錄路由
 @app.get("/")
 async def home(request: Request):
@@ -37,9 +39,8 @@ async def signin(
     
     # 儲存登入資料到session
     request.session["member"] = member
-
-    return RedirectResponse("/member", status_code=303)
-
+    return RedirectResponse("/member", status_code=303) 
+ 
 # 會員頁路由
 @app.get("/member")
 async def member(request: Request): 
@@ -53,9 +54,7 @@ async def member(request: Request):
 @app.get("/signout")
 async def signout(request: Request):
     request.session.clear()  # 清空 session
-    response = RedirectResponse("/", status_code=303)
-    response.delete_cookie("session")  # 確保 session Cookie 被刪除
-    return response
+    return RedirectResponse("/", status_code=303)
 
 # 錯誤路由
 @app.get("/error")
