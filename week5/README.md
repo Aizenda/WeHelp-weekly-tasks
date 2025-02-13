@@ -2,12 +2,12 @@
 
 <h1 style="text-align: center;">Week 5 Task Summary</h1>
 
-## MySQL Login Prerequisite
-## Task 2: Create database and table in your MySQL server
+* ## MySQL Login Prerequisite
+* ## Task 2: Create database and table in your MySQL server
 * [Q1: Create a new database named website](#q1-create-a-new-database-named-website)
 * [Q2: Create a new table named member, in the website database](#q2-create-a-new-table-named-member-in-the-website-database)
 
-## Task 3: SQL CRUD
+* ## Task 3: SQL CRUD
 * [Q1: INSERT a new row to the member table where name, username and password must be set to test. INSERT additional 4 rows with arbitrary data](#q1-insert-a-new-row-to-the-member-table-where-name-username-and-password-must-be-set-to-test-insert-additional-4-rows-with-arbitrary-data)
 * [Q2: SELECT all rows from the member table](#q2-select-all-rows-from-the-member-table)
 * [Q3: SELECT all rows from the member table, in descending order of time](#q3-select-all-rows-from-the-member-table-in-descending-order-of-time)
@@ -17,13 +17,13 @@
 * [Q7: SELECT rows where both username and password equal to test](#q7-select-rows-where-both-username-and-password-equal-to-test)
 * [Q8: UPDATE data in name column to test2 where username equals to test](#q8-update-data-in-name-column-to-test2-where-username-equals-to-test)
 
-## Task 4: SQL Aggregation Functions
+* ## Task 4: SQL Aggregation Functions
 * [Q1: SELECT how many rows from the member table](#q1-select-how-many-rows-from-the-member-table)
 * [Q2: SELECT the sum of follower_count of all the rows from the member table](#q2-select-the-sum-of-follower_count-of-all-the-rows-from-the-member-table)
 * [Q3: SELECT the average of follower_count of all the rows from the member table](#q3-select-the-average-of-follower_count-of-all-the-rows-from-the-member-table)
 * [Q4: SELECT the average of follower_count of the first 2 rows, in descending order of follower_count, from the member table](#q4-select-the-average-of-follower_count-of-the-first-2-rows-in-descending-order-of-follower_count-from-the-member-table)
 
-## Task 5: SQL JOIN
+* ## Task 5: SQL JOIN
 * [Q1: Create a new table named message, in the website database](#q1-create-a-new-table-named-message-in-the-website-database)
 * [Q2: SELECT all messages, including sender names](#q2-select-all-messages-including-sender-names)
 * [Q3: SELECT all messages, including sender names, where sender username equals to test](#q3-select-all-messages-including-sender-names-where-sender-username-equals-to-test)
