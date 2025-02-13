@@ -39,14 +39,14 @@
 
 ### Q2: Key in password  
 
-![前置](/img/前置.png)
+![前置](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/%E5%89%8D%E7%BD%AE.png)
 
 # Task 2: Create database and table in your MySQL server
 ### Q1: Create a new database named website
 * ### SQL code　＆　screenshots
 		CREATE DATABASE website;
 
-	![task2-1](/img/2-1.png) 
+	![task2-1]([/img/2-1.png](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/2-1.png)) 
 ### Q2: Create a new table named member, in the website database
 
 <table border="1" style="border-collapse: collapse;">
@@ -107,7 +107,7 @@
 				PRIMARY KEY(id)
 		);
 
-	![task2-2](/img/2-2.png)  
+	![task2-2](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/2-2.png)  
 
 * ### Q2 derivative: How to view the member table structure?
 	### syntax:
@@ -123,7 +123,7 @@
 		INSERT INTO member (name, username, password)
 		VALUES ('test', 'test', 'test');
 
-	![task3-1](/img/3-1.png)  
+	![task3-1](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/3-1.png) 
 	```
 	INSERT INTO member (name, username, password, follower_count)
 	VALUES 
@@ -136,14 +136,14 @@
 * ### SQL code　&　screenshots　　
 		SELECT * FROM member;
 
-	![task3-2](/img/3-2.png)  
+	![task3-2](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/3-2.png)   
 
 ### Q3: SELECT all rows from the member table, in descending order of time.  
 * ### SQL code　&　screenshots　　
 		SELECT * FROM member
 		ORDER BY time DESC;
 
-	![task3-3](/img/3-3.png)  
+	![task3-3](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/3-3.png)   
 
 ### Q4: SELECT total 3 rows, second to fourth, from the member table, in descending order of time.  
 * ### SQL code　&　screenshots　　
@@ -151,14 +151,14 @@
 		ORDER BY time DESC
 		LIMIT 1 , 3;
 
-	![task3-4](/img/3-4.png)  
+	![task3-4](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/3-4.png)   
 
 ### Q5: SELECT rows where username equals to test.  
 * ### SQL code　&　screenshots　　
 		SELECT * FROM member
 		WHERE username='test';
 
-	![task3-5](/img/3-5.png) 
+	![task3-5](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/3-5.png)  
 
 
 ### Q6: SELECT rows where name includes the es keyword.  
@@ -166,14 +166,14 @@
 		SELECT * FROM member
 		WHERE name LIIKE '%es%';
 
-	![task3-6](/img/3-6.png) 
+	![task3-6](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/3-6.png)  
 
 ### Q7: SELECT rows where both username and password equal to test.  
 * ### SQL code　&　screenshots　　
 		SELECT * FROM member
 		WHERE name='test' AND password='test';
 
-	![task3-7](/img/3-7.png) 
+	![task3-7](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/3-7.png)  
 
 ### Q8: UPDATE data in name column to test2 where username equals to test. 
 * ### SQL code　&　screenshots　　
@@ -181,26 +181,26 @@
 		SET name='test'
 		WHERE username='test';
 
-	![task3-8](/img/3-8.png) 
+	![task3-8](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/3-8.png) 
 
 # Task 4: SQL Aggregation Functions  
 ### Q1: SELECT how many rows from the member table.
 * ### SQL code　&　screenshots  
 		SELECT COUNT(*) FROM member;
 	
-	![task4-1](/img/4-1.png)
+	![task4-1](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/4-1.png) 
 
 ### Q2: SELECT the sum of follower_count of all the rows from the member table.
 * ### SQL code　&　screenshots  
 		SELECT SUM(follower_count) AS follower_count FROM member;
 	
-	![task4-2](/img/4-2.png)
+	![task4-2](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/4-2.png) 
 
 ### Q3: SELECT the average of follower_count of all the rows from the member table.
 * ### SQL code　&　screenshots  
 		SELECT AVG(follower_count) AS follower_avg FROM member;
 	
-	![task4-3](/img/4-3.png)  
+	![task4-3](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/4-3.png)   
 
 ### Q4: SELECT the average of follower_count of the first 2 rows, in descending order of follower_count, from the member table.
 * ### SQL code　&　screenshots  
@@ -213,7 +213,7 @@
 		) AS top_2;
 
 	
-	![task4-4](/img/4-4.png)  
+	![task4-4](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/4-4.png)   
 
 # Task 5: SQL JOIN
 ### Q1: Create a new table named message, in the website database.
@@ -268,14 +268,14 @@
 			FOREIGN KEY (member_id) REFERENCES member(id)
 		);
 
-	![task5-1](/img/5-1.png)  
+	![task5-1](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/5-1.png)  
 
 ### Q2: SELECT all messages, including sender names. We have to JOIN the member table to get that.
 * ### SQL code　&　screenshots  
 		SELECT message.id, member.name AS name, message.content, message.like_count, message.time FROM message
 		INNER JOIN member ON message.member_id = member.id;
 
-	![task5-2](/img/5-2.png)
+	![task5-2](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/5-2.png)  
 
 ### Q3: SELECT all messages, including sender names, where sender username equals to test. We have to JOIN the member table to filter and get that.
 * ### SQL code　&　screenshots 
@@ -284,7 +284,7 @@
 		INNER JOIN member ON message.member_id = member.id 
 		WHERE member.username = 'test';
 
-	![task5-3](/img/5-3.png)
+	![task5-3](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/5-3.png)  
 
 
 ### Q4: SELECT all messages, including sender names, where sender username equals to test. We have to JOIN the member table to filter and get that.
@@ -298,7 +298,7 @@
     		WHERE member.username = 'test'
 		) AS username_test;
 
-	![task5-4](/img/5-4.png)
+	![task5-4](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/5-4.png)  
 
 
 ### Use SELECT, SQL Aggregation Functions with JOIN statement, get the average like count of messages GROUP BY sender username.
@@ -308,4 +308,4 @@
 		JOIN member ON message.member_id = member.id
 		GROUP BY member.name;
 
-	![task5-5](/img/5-5-1.png)
+	![task5-5](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/5-5-1.png)  
