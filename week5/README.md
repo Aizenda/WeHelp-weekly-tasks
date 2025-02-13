@@ -2,7 +2,7 @@
 
 # Week5-task
 # MySQL Login Prerequisite
-# [Task 2: Create database and table in your MySQL server](#task-2-create-database-and-table-in-your-mysql-server)
+# Task 2: Create database and table in your MySQL server
 * [Q1: Create a new database named website](#q1-create-a-new-database-named-website)
 * [Q2: Create a new table named member, in the website database](#q2-create-a-new-table-named-member-in-the-website-database)
 
