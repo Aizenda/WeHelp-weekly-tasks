@@ -46,7 +46,7 @@
 * ### SQL code　＆　screenshots
 		CREATE DATABASE website;
 
-	![task2-1](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/2-1.png)) 
+	![task2-1](https://github.com/Aizenda/WeHelp-weekly-tasks/blob/main/week5/img/2-1.png)
 ### Q2: Create a new table named member, in the website database
 
 <table border="1" style="border-collapse: collapse;">
