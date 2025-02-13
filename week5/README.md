@@ -1,4 +1,4 @@
-<h1 style="text-align: center;">Week 5 Task Summary</h1>
+# Week 5 Task Summary
 
 * ## MySQL Login Prerequisite
 * ## Task 2: Create database and table in your MySQL server
