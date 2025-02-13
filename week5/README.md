@@ -28,6 +28,11 @@
 	* [Q4: Use SELECT, SQL Aggregation Functions with JOIN statement, get the average like count of messages where sender username equals to test](#q4-use-select-sql-aggregation-functions-with-join-statement-get-the-average-like-count-of-messages-where-sender-username-equals-to-test)
 	* [Q5: Use SELECT, SQL Aggregation Functions with JOIN statement, get the average like count of messages GROUP BY sender username](#q5-use-select-sql-aggregation-functions-with-join-statement-get-the-average-like-count-of-messages-group-by-sender-username)
 
+<div style="text-align: center;">
+  Content
+</div>
+
+
 # MySQL Login Prerequisite
 ### Q1: Use MySQL Login syntax  
 	mysql -u [username] -p
