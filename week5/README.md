@@ -1,11 +1,7 @@
-# SQL指令與截圖  
-
-<br/>
+# SQL指令與截圖
 
 # Week5-task
-
 ## [MySQL Login Prerequisite](#mysql-login-prerequisite)
-
 ## [Task 2: Create database and table in your MySQL server](#task-2-create-database-and-table-in-your-mysql-server)
 * [Q1: Create a new database named website](#q1-create-a-new-database-named-website)
 * [Q2: Create a new table named member, in the website database](#q2-create-a-new-table-named-member-in-the-website-database)
@@ -27,7 +23,7 @@
 * [Q4: SELECT the average of follower_count of the first 2 rows, in descending order of follower_count, from the member table](#q4-select-the-average-of-follower_count-of-the-first-2-rows-in-descending-order-of-follower_count-from-the-member-table)
 
 ## [Task 5: SQL JOIN](#task-5-sql-join)
-* [Q1: Create a new table named message, in the website database.](#q1-create-a-new-table-named-message-in-the-website-database)
+* [Q1: Create a new table named message, in the website database](#q1-create-a-new-table-named-message-in-the-website-database)
 * [Q2: SELECT all messages, including sender names](#q2-select-all-messages-including-sender-names)
 * [Q3: SELECT all messages, including sender names, where sender username equals to test](#q3-select-all-messages-including-sender-names-where-sender-username-equals-to-test)
 * [Q4: Use SELECT, SQL Aggregation Functions with JOIN statement, get the average like count of messages where sender username equals to test](#q4-use-select-sql-aggregation-functions-with-join-statement-get-the-average-like-count-of-messages-where-sender-username-equals-to-test)
