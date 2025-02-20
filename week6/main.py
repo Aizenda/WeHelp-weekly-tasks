@@ -93,19 +93,23 @@ async def signin(
         return RedirectResponse("/error?message=資料庫連接失敗", status_code=303)
 
     try:
-        query = "SELECT * FROM member WHERE username = %s AND password = %s"
+        query = "SELECT id, name, username FROM member WHERE username = %s AND password = %s"
         cursor.execute(query, (username, password))
         result = cursor.fetchone()
 
         if result is None:
             return RedirectResponse("/error?message=登錄失敗，帳號或密碼錯誤", status_code=303)
         
-        # 儲存登入資訊到 session
-        request.session["member"] = {"name": result["name"],"username": result["username"]}
+        # 儲存 **id, name, username** 到 session
+        request.session["member"] = {
+            "id": result["id"],
+            "name": result["name"],
+            "username": result["username"]
+        }
 
-        return RedirectResponse("/member",status_code=303)
+        return RedirectResponse("/member", status_code=303)
     
-    except Error as e:
+    except Exception as e:
         print(f"資料庫操作錯誤: {e}")  
         return RedirectResponse("/error?message=資料庫操作失敗", status_code=303)
 
@@ -113,22 +117,44 @@ async def signin(
         cursor.close()
         cnx.close()
 
-# 會員頁路由
+#會員頁
 @app.get("/member")
-async def member(request: Request): 
-    if  len(request.session) == 0:
+async def member(request: Request):
+    if "member" not in request.session:
         return RedirectResponse("/error?message=您尚未登錄", status_code=303)
-    
+
     cnx, cursor = connect_to_database('root', 'root', '127.0.0.1', 'website')
     if not cnx or not cursor:
         return RedirectResponse("/error?message=資料庫連接失敗", status_code=303)
-    query = "SELECT member.name, message.content FROM member INNER JOIN message ON member.id = message.member_id"
 
-    cursor.execute(query)
-    all_message = cursor.fetchall()
-    response = templates.TemplateResponse("member_page.html", {"request": request, "name":request.session["member"]["name"],"message_name": all_message ,"all_message":all_message})
-    response.headers["Cache-Control"] = "no-store"#禁止儲存
-    return response
+    try:
+        # 取得所有留言
+        query = """
+        SELECT message.id, member.name, message.content, message.member_id
+        FROM member 
+        INNER JOIN message ON member.id = message.member_id
+        """
+        cursor.execute(query)
+        all_message = cursor.fetchall()
+        # 取得當前登入用戶的 ID
+        session_member_id = request.session["member"]["id"]
+
+        response = templates.TemplateResponse("member_page.html", {
+            "request": request, 
+            "name": request.session["member"]["name"], 
+            "all_message": all_message,
+            "session_member_id": session_member_id  # 傳到前端做比對
+        })
+        response.headers["Cache-Control"] = "no-store"  # 禁止緩存
+        return response
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return RedirectResponse("/error?message=無法加載留言", status_code=303)
+
+    finally:
+        cursor.close()
+        cnx.close()
 
 #留言路由
 @app.post("/createMessage")
@@ -151,8 +177,7 @@ async def createMessage(request: Request,
         if not member:
             return RedirectResponse("/error?message=找不到會員", status_code=303)
 
-        member_id = member.get("id")  # 取得會員 id
-        print(member_id)
+        member_id = member.get("id") 
 
         # 2. 插入訊息
         cursor.execute(
@@ -169,7 +194,43 @@ async def createMessage(request: Request,
         cursor.close()
         cnx.close()
 
-#留言顯示
+#留言刪除路由
+@app.post("/deleteMessage")
+async def delete_message(request: Request, message_id: int = Form(...)):
+    if "member" not in request.session:
+        return RedirectResponse("/error?message=您尚未登錄", status_code=303)
+
+    cnx, cursor = connect_to_database('root', 'root', '127.0.0.1', 'website')
+    if not cnx or not cursor:
+        return RedirectResponse("/error?message=資料庫連接失敗", status_code=303)
+
+    try:
+        # 取得當前登入的會員 ID
+        session_member_id = request.session["member"]["id"]
+
+        # 確保當前會員只能刪除自己的留言
+        cursor.execute("SELECT member_id FROM message WHERE id = %s", (message_id,))
+        message = cursor.fetchone()
+
+        if not message:
+            return RedirectResponse("/error?message=留言不存在", status_code=303)
+
+        if message["member_id"] != session_member_id:
+            return RedirectResponse("/error?message=您無權刪除此留言", status_code=303)
+
+        # 刪除留言
+        cursor.execute("DELETE FROM message WHERE id = %s", (message_id,))
+        cnx.commit()
+
+        return RedirectResponse("/member", status_code=303)
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return RedirectResponse("/error?message=刪除留言失敗", status_code=303)
+
+    finally:
+        cursor.close()
+        cnx.close()
 
 #登出路由
 @app.get("/signout")

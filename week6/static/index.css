@@ -45,6 +45,9 @@ div > form > div{
 }
 
 .message-item {
-	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px; /* 留言與刪除按鈕的間距 */
 }
 

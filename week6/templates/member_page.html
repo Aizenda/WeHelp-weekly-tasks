@@ -30,13 +30,26 @@
 	<div>
     {% if all_message %}
         {% for message in all_message %}
-            <div class="message-item">
-							<p>{{ message["name"] }}: {{ message["content"] }}</p>
+            <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+                <p>{{ message["name"] }}: {{ message["content"] }}</p>
+                 
+                {% if message["member_id"] == session_member_id %}
+                    <!-- 刪除按鈕 -->
+                    <form method="POST" action="/deleteMessage" onsubmit="return confirmDelete();">
+                        <input type="hidden" name="message_id" value="{{ message['id'] }}">
+                        <button type="submit" style="border: none; background: none; color: red; cursor: pointer;">❌</button>
+                    </form>
+                {% endif %}
             </div>
         {% endfor %}
     {% else %}
-        <p>目前還沒有留言</p>
+        <p style="text-align: center;">目前還沒有留言</p>
     {% endif %}
 </div>
+<script>
+function confirmDelete() {
+    return confirm("確定要刪除這則留言嗎？");
+}
+</script>
 </body>
 </html>
