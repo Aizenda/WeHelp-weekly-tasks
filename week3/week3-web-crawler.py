@@ -29,6 +29,7 @@ def Task1(regional_URL , MRT_URL):
 
     #處理MRT資訊 => {站名 : list[SERIAL_NO]}，用站名對不同捷運號碼分組
     MRT_NO = {}
+    print(MRT_data)
     for i in MRT_data:
         mrt = i["MRT"]
         serial_no = i["SERIAL_NO"]

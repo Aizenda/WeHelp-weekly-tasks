@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="/static/index.css">
+		<title>會員頁</title>
+</head>
+<body>
+	<div class = "title">歡迎光臨，這是會員頁面</div>
+	<div class = "num">
+		歡迎，{{name}}登入系統~~
+	</div>
+		<a href="/signout" class="signout" method="GET">
+		登出系統
+	</a>
+	<hr/>
+	<div class = "title2">快來留言吧</div>
+	<div>
+		<form  method="POST" id="myForm" class = "form" action = "/createMessage">
+			<div>
+				<span>內容</span>
+				<input type="text" name="content"/>
+			</div>
+			<button>送出</button>
+		</form>
+	</div>
+
+	<hr/>
+	<div>
+    {% if all_message %}
+        {% for message in all_message %}
+            <div class="message-item">
+							<p>{{ message["name"] }}: {{ message["content"] }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>目前還沒有留言</p>
+    {% endif %}
+</div>
+</body>
+</html>
