@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/index.css">
+    
+    <title>會員頁</title>
+</head>
+<body>
+	<div class = "title">歡迎光臨，這是會員頁面</div>
+	<div class = "num" id = displayName>
+		歡迎，{{name}}登入系統~~
+	</div>
+		<a href="/signout" class="signout" method="GET">
+		登出系統
+	</a>
+	<hr/>
+	<div class = "title2">快來留言吧</div>
+	<div>
+		<form  method="POST" id="myForm" class = "form" action = "/createMessage"  onsubmit="return validateMessage()">
+			<div>
+				<span>內容</span>
+				<input type="text" name="content" id="message"/>
+                <button otype="submit" >送出</button>
+			</div>
+			
+		</form>
+	</div>
+
+	<hr/>
+	<div>
+    {% if all_message %}
+        {% for message in all_message %}
+            <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+                <p>{{ message["name"] }}: {{ message["content"] }}</p>
+                 
+                {% if message["member_id"] == session_member_id %}
+                    <!-- 刪除按鈕 -->
+                    <form method="POST" action="/deleteMessage" onsubmit="return confirmDelete();">
+                        <input type="hidden" name="message_id" value="{{ message['id'] }}">
+                        <button type="submit" style="border: none; background: none; color: red; cursor: pointer;">❌</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="text-align: center;">目前還沒有留言</p>
+    {% endif %}
+</div>
+<hr/>
+<div style="text-align: center;">
+	<div class="title2">查詢會員</div>
+			<input type="text" id="username" placeholder="請輸入要查詢的姓名">
+			<button onclick="searchMember()">查詢</button>
+			<p id="result"></p>
+</div>
+<div style="text-align: center;">
+		<div class="title2">更新會員姓名</div>
+    <input type="text" id="newName" placeholder="輸入新的姓名">
+    <button onclick="updateName()">更新</button>
+    <p id="status"></p>
+</div>
+<script src="/static/member.js" defer></script>
+</body>
+</html>

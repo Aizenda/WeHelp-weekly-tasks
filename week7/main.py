@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form, Request , Query , Depends
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import  RedirectResponse,JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -9,6 +9,7 @@ from mysql.connector import errorcode , Error
 # 初始化
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
 
 # 添加Session中間件
 app.add_middleware(
@@ -24,7 +25,6 @@ def connect_to_database(user: str, password: str, host: str, database: str ):
                                       host=host,
                                       database=database)
         cursor = cnx.cursor(dictionary=True)
-        print('SQL Connected check')
         return cnx, cursor  # 返回連線和游標以供後續操作
     except mysql.connector.Error as err:
         if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -146,6 +146,7 @@ async def member(request: Request):
             "session_member_id": session_member_id  # 傳到前端做比對
         })
         response.headers["Cache-Control"] = "no-store"  # 禁止緩存
+        
         return response
 
     except Exception as e:
@@ -246,6 +247,69 @@ async def err(request: Request, message: str):
     else:
         return templates.TemplateResponse("err_member_page.html", {"request": request, "err": message})
 
+#會員查詢路由
+@app.get("/api/member")
+async def query_member(request:Request , username:str = Query(None)):
+    if not username:
+        return RedirectResponse("/error?message=姓名不得為空")
+
+    cnx,cursor = connect_to_database('root','root','127.0.0.1','website')
+    if not cnx or not cursor:
+        return RedirectResponse("/error?message=資料庫連線失敗")
+
+    try:
+        query = "SELECT id, name, username From member WHERE BINARY username = %s"
+        cursor.execute(query,(username,))
+        data = cursor.fetchone()
+        
+        if not data:
+            return JSONResponse(content={"data":None})
+        else:
+            return JSONResponse(content={"data":data})
+        
+    except Exception as e:
+        print(f"發生錯誤:{e}")
+        return RedirectResponse("/error?message=資料庫連線失敗")
+    
+    finally:
+        cursor.close()
+        cnx.close()
+        
+
+#會員名稱更新路由
+@app.patch("/api/member")
+async def update_username(request:Request):
+    data = await request.json()
+    new_name = data.get("name")
+    user_id = request.session["member"]["id"]
+
+    if not new_name:
+        return JSONResponse(content={"error": True, "message": "姓名不可為空"}, status_code=400)
+    
+    cnx,cursor = connect_to_database('root','root','127.0.0.1','website')
+    if not cnx or not cursor:
+        return JSONResponse(content={"error": True, "message": "資料庫連線失敗"}, status_code=500)
+    
+    try:
+        update_query = "UPDATE member SET name = %s WHERE id = %s"
+        cursor.execute(update_query,(new_name, user_id))
+        cnx.commit()
+        
+        select_query = "SELECT id, name FROM member WHERE id = %s"
+        cursor.execute(select_query,(user_id,))
+        data = cursor.fetchone()
+        response_name=data.get("name")
+
+        return JSONResponse(content={"ok": True, "message": "更新成功", "response_name":response_name}, status_code=200)
+    
+    except Exception as e:
+        print(f"更新失敗: {e}")
+        return JSONResponse(content={"error": True, "message": f"更新失敗: {str(e)}"}, status_code=400)
+    
+    finally:
+        cursor.close()
+        cnx.close() 
 
 # 靜態檔案處理
 app.mount("/static", StaticFiles(directory="static"), name="static")
+

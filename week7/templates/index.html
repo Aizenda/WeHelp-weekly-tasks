@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>首頁</title>
+		<link rel="stylesheet" href="/static/index.css">
+</head>
+<body>
+	<div class = "title">歡迎光臨，請註冊登入系統</div>
+	<div class = "title2">註冊帳號</div>
+	<div>
+		<form  method="POST" id="myForm" class = "form" action = "/signup">
+			<div>
+				<span>姓名</span>
+				<input type="text" name="name"/>
+			</div>
+			<div>
+				<span>帳號</span>
+				<input type="text" name="username"/>
+			</div>
+			<div>
+			<span>密碼</span>
+				<input type="password" name="password"/>
+			</div>
+			<button>註冊</button>
+		</form>
+	</div>
+	<div class = "title2">登入系統</div>
+	<div>
+		<form  method="POST" id="myForm" class = "form" action = "/signin">
+			<div>
+				<span>帳號</span>
+				<input type="text" name="username"/>
+			</div>
+			<div>
+			<span>密碼</span>
+				<input type="password" name="password"/>
+			</div>
+			<button>登入</button>
+		</form>
+	</div>
+	<script>
+		document.getElementById("myForm").addEventListener("submit", function(event) {
+				let checkbox = document.getElementById("agreeCheckbox");
+				if (!checkbox.checked) {
+						alert("請勾選同意條款");
+						event.preventDefault();
+				};
+			});
+	</script>
+</body>
+</html>
