@@ -288,13 +288,15 @@ async def update_username(request:Request ,body :dict = Body(None)):
     cnx,cursor = connect_to_database('root','root','127.0.0.1','website')
     
     try:
+
         if request.session["member"]["name"] == new_name:
+            
             return {"error":True}
         
         update_query = "UPDATE member SET name = %s WHERE id = %s"
         cursor.execute(update_query,(new_name, user_id))
         cnx.commit()
-
+        request.session["member"]["name"] = new_name
         return {"ok": True}
     
     finally:
