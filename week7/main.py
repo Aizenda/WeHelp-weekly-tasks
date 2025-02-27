@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, Request , Query , Depends
+from fastapi import FastAPI, Form, Request , Query , Body
 from fastapi.responses import  RedirectResponse,JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -250,12 +250,15 @@ async def err(request: Request, message: str):
 #會員查詢路由
 @app.get("/api/member")
 async def query_member(request:Request , username:str = Query(None)):
+    if "member" not in  request.session:
+        return {"data":"null"}
+
     if not username:
-        return RedirectResponse("/error?message=姓名不得為空")
+        return {"data":"null"}
 
     cnx,cursor = connect_to_database('root','root','127.0.0.1','website')
-    if not cnx or not cursor:
-        return RedirectResponse("/error?message=資料庫連線失敗")
+    if not (cnx and cursor):  
+        return {"error": True, "message": "資料庫連線失敗"}
 
     try:
         query = "SELECT id, name, username From member WHERE BINARY username = %s"
@@ -263,13 +266,9 @@ async def query_member(request:Request , username:str = Query(None)):
         data = cursor.fetchone()
         
         if not data:
-            return JSONResponse(content={"data":None})
+            return {"data":"null"}
         else:
-            return JSONResponse(content={"data":data})
-        
-    except Exception as e:
-        print(f"發生錯誤:{e}")
-        return RedirectResponse("/error?message=資料庫連線失敗")
+            return {"data":data}
     
     finally:
         cursor.close()
@@ -278,17 +277,20 @@ async def query_member(request:Request , username:str = Query(None)):
 
 #會員名稱更新路由
 @app.patch("/api/member")
-async def update_username(request:Request):
-    data = await request.json()
-    new_name = data.get("name")
+async def update_username(request:Request ,body :dict = Body(None)):
+
+    new_name = body.get("name")
     user_id = request.session["member"]["id"]
 
+    if "member" not in  request.session:
+        return {"error":True,"message":"請登入"}
+    
     if not new_name:
-        return JSONResponse(content={"error": True, "message": "姓名不可為空"}, status_code=400)
+        return{"error": True, "message": "姓名不可為空", "status_code":400}
     
     cnx,cursor = connect_to_database('root','root','127.0.0.1','website')
     if not cnx or not cursor:
-        return JSONResponse(content={"error": True, "message": "資料庫連線失敗"}, status_code=500)
+        return {"error": True, "message": "資料庫連線失敗","status_code":500 }
     
     try:
         update_query = "UPDATE member SET name = %s WHERE id = %s"
@@ -300,11 +302,11 @@ async def update_username(request:Request):
         data = cursor.fetchone()
         response_name=data.get("name")
 
-        return JSONResponse(content={"ok": True, "message": "更新成功", "response_name":response_name}, status_code=200)
+        return {"ok": True, "message": "更新成功", "response_name":response_name, "status_code":200}
     
     except Exception as e:
         print(f"更新失敗: {e}")
-        return JSONResponse(content={"error": True, "message": f"更新失敗: {str(e)}"}, status_code=400)
+        return {"error": True, "message": f"更新失敗: {str(e)}", "status_code":400}
     
     finally:
         cursor.close()

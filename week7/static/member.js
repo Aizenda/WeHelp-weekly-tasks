@@ -28,20 +28,20 @@ async function searchMember(){
 
 	try {
 		const response = await fetch(url, { method: "GET" });
-		if (!response.ok) {
-			throw new Error(`HTTP 錯誤！狀態碼：${response.status}`);
-		}
 		const data = await response.json();
-		if (!data.data) {
+		if (data.error) {
+			throw new Error( data.message );
+		};
+		
+		if (data.data === "null") {
 			result.textContent = '找不到會員資料';
 		} else {
-			result.textContent = `${data.data.name} (${data.data.username})`;
+			result.textContent = `${ data.data.name } (${ data.data.username })`;
 		};
 
 	} catch(error){
-		console.error("請求失敗:", error);
-		window.location.href = "/error?message=發生錯誤，請稍後再試";
-	}
+		window.location.href = `/error?message=${ data.message }`;
+	};
 };
 
 // 姓名更新
@@ -64,17 +64,23 @@ async function updateName(){
 		const response = await fetch(url, {
 			method : "PATCH", 
 			headers : header,
-			body : JSON.stringify( { name : newName } )
+			body : JSON.stringify( { "name" : newName } )
 		});
 
 		const data = await response.json();
-		if (response.status === 400) {
-			window.location.href = `/error?message=${data.message}`;
-		} else if(response.status === 500){
-			window.location.href = `/error?message=${data.message}`;
+		if (data.status_code === 400) {
+
+			window.location.href = `/error?message=${ data.message }`;
+
+		} else if(data.status_code === 500){
+
+			window.location.href = `/error?message=${ data.message }`;
+
 		}else if(data.ok){
-			displayName.textContent =  `歡迎 ${data.response_name} 登入系統~~`;
+
+			displayName.textContent =  `歡迎 ${ data.response_name } 登入系統~~`;
 			status.textContent = data.message;
+
 		};
 		
 	} catch(error) {
