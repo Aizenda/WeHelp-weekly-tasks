@@ -257,9 +257,6 @@ async def query_member(request:Request , username:str = Query(None)):
         return {"data":"null"}
 
     cnx,cursor = connect_to_database('root','root','127.0.0.1','website')
-    if not (cnx and cursor):  
-        return {"error": True, "message": "資料庫連線失敗"}
-
     try:
         query = "SELECT id, name, username From member WHERE BINARY username = %s"
         cursor.execute(query,(username,))
@@ -283,30 +280,22 @@ async def update_username(request:Request ,body :dict = Body(None)):
     user_id = request.session["member"]["id"]
 
     if "member" not in  request.session:
-        return {"error":True,"message":"請登入"}
+        return {"error":True}
     
     if not new_name:
-        return{"error": True, "message": "姓名不可為空", "status_code":400}
+        return{"error": True}
     
     cnx,cursor = connect_to_database('root','root','127.0.0.1','website')
-    if not cnx or not cursor:
-        return {"error": True, "message": "資料庫連線失敗","status_code":500 }
     
     try:
+        if request.session["member"]["name"] == new_name:
+            return{"error":True}
+        
         update_query = "UPDATE member SET name = %s WHERE id = %s"
         cursor.execute(update_query,(new_name, user_id))
         cnx.commit()
-        
-        select_query = "SELECT id, name FROM member WHERE id = %s"
-        cursor.execute(select_query,(user_id,))
-        data = cursor.fetchone()
-        response_name=data.get("name")
 
-        return {"ok": True, "message": "更新成功", "response_name":response_name, "status_code":200}
-    
-    except Exception as e:
-        print(f"更新失敗: {e}")
-        return {"error": True, "message": f"更新失敗: {str(e)}", "status_code":400}
+        return {"ok": True}
     
     finally:
         cursor.close()

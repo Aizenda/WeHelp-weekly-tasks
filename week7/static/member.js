@@ -26,22 +26,15 @@ async function searchMember(){
 
 	const url = `http://127.0.0.1:8000/api/member?username=${username}`;
 
-	try {
-		const response = await fetch(url, { method: "GET" });
-		const data = await response.json();
-		if (data.error) {
-			throw new Error( data.message );
-		};
-		
-		if (data.data === "null") {
-			result.textContent = '找不到會員資料';
-		} else {
-			result.textContent = `${ data.data.name } (${ data.data.username })`;
-		};
-
-	} catch(error){
-		window.location.href = `/error?message=${ data.message }`;
+	const response = await fetch(url, { method: "GET" });
+	const data = await response.json();
+	
+	if (data.data === "null") {
+		result.textContent = '找不到會員資料';
+	} else {
+		result.textContent = `${ data.data.name } (${ data.data.username })`;
 	};
+
 };
 
 // 姓名更新
@@ -59,34 +52,18 @@ async function updateName(){
 		"Content-Type" : "application/json"
 	}
 
-	try {
+	const response = await fetch(url, {
+		method : "PATCH", 
+		headers : header,
+		body : JSON.stringify( { "name" : newName } )
+	});
 
-		const response = await fetch(url, {
-			method : "PATCH", 
-			headers : header,
-			body : JSON.stringify( { "name" : newName } )
-		});
+	const data = await response.json();
+	if (!data.ok) {
+		status.textContent = "更新失敗，姓名與前一次相同"
+		return
+	}
+	displayName.textContent  = `歡迎${newName}登入系統~~`
+	status.textContent = "更新成功"
 
-		const data = await response.json();
-		if (data.status_code === 400) {
-
-			window.location.href = `/error?message=${ data.message }`;
-
-		} else if(data.status_code === 500){
-
-			window.location.href = `/error?message=${ data.message }`;
-
-		}else if(data.ok){
-
-			displayName.textContent =  `歡迎 ${ data.response_name } 登入系統~~`;
-			status.textContent = data.message;
-
-		};
-		
-	} catch(error) {
-
-		window.location.href = "/error?message=發生錯誤，請稍後再試";
-		console.error("請求失敗:", error);
-
-	};
 };
