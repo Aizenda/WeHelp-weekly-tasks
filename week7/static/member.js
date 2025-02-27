@@ -28,8 +28,7 @@ async function searchMember(){
 
 	const response = await fetch(url, { method: "GET" });
 	const data = await response.json();
-	
-	if (data.data === "null") {
+	if (!data.data) {
 		result.textContent = '找不到會員資料';
 	} else {
 		result.textContent = `${ data.data.name } (${ data.data.username })`;

@@ -251,10 +251,10 @@ async def err(request: Request, message: str):
 @app.get("/api/member")
 async def query_member(request:Request , username:str = Query(None)):
     if "member" not in  request.session:
-        return {"data":"null"}
+        return {"data":None}
 
     if not username:
-        return {"data":"null"}
+        return {"data":None}
 
     cnx,cursor = connect_to_database('root','root','127.0.0.1','website')
     try:
@@ -263,7 +263,7 @@ async def query_member(request:Request , username:str = Query(None)):
         data = cursor.fetchone()
         
         if not data:
-            return {"data":"null"}
+            return {"data":None}
         else:
             return {"data":data}
     
@@ -283,13 +283,13 @@ async def update_username(request:Request ,body :dict = Body(None)):
         return {"error":True}
     
     if not new_name:
-        return{"error": True}
+        return {"error": True}
     
     cnx,cursor = connect_to_database('root','root','127.0.0.1','website')
     
     try:
         if request.session["member"]["name"] == new_name:
-            return{"error":True}
+            return {"error":True}
         
         update_query = "UPDATE member SET name = %s WHERE id = %s"
         cursor.execute(update_query,(new_name, user_id))
